@@ -2,11 +2,18 @@
 # Nagios plugin to check the system state according to systemd.
 
 from __future__ import division, print_function
+import posixpath
 import subprocess
 import sys
 
+systemctl = '/usr/bin/systemctl'
+
+if not posixpath.exists(systemctl):
+    print('System WARN: systemctl not found')
+    sys.exit(1)
+
 try:
-    state = subprocess.check_output(['systemctl', 'is-system-running'])
+    state = subprocess.check_output([systemctl, 'is-system-running'])
     state = state.strip()
 except subprocess.CalledProcessError as e:
     state = e.output.strip()
