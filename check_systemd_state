@@ -6,9 +6,16 @@ import posixpath
 import subprocess
 import sys
 
-systemctl = '/usr/bin/systemctl'
 
-if not posixpath.exists(systemctl):
+def find_systemctl():
+    systemctls = [ '/bin/systemctl', '/usr/bin/systemctl' ]
+    for systemctl in systemctls:
+        if posixpath.exists(systemctl):
+            return systemctl
+
+
+systemctl = find_systemctl()
+if not systemctl:
     print('System WARN: systemctl not found')
     sys.exit(1)
 
