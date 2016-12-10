@@ -27,7 +27,7 @@ except subprocess.CalledProcessError as e:
     print('System NOT OK: {}'.format(state))
     sys.exit(2)
 
-if state == 'running':
+if state in ['running', 'starting']:
     print('System OK: {}'.format(state))
     sys.exit(0)
 else:
