@@ -7,29 +7,39 @@ import subprocess
 import sys
 
 
-def find_systemctl():
-    systemctls = [ '/bin/systemctl', '/usr/bin/systemctl' ]
-    for systemctl in systemctls:
-        if posixpath.exists(systemctl):
-            return systemctl
-
-
-systemctl = find_systemctl()
-if not systemctl:
-    print('System WARN: systemctl not found')
-    sys.exit(1)
-
 try:
-    state = subprocess.check_output([systemctl, 'is-system-running'])
-    state = state.strip()
-except subprocess.CalledProcessError as e:
-    state = e.output.strip()
-    print('System NOT OK: {}'.format(state))
-    sys.exit(2)
+    import dbus
+except ImportError:
+    print("UNKNOWN: Please install python-dbus")
+    sys.exit(3)
 
-if state in ['running', 'starting']:
-    print('System OK: {}'.format(state))
+
+bus = dbus.SystemBus()
+proxy = bus.get_object('org.freedesktop.systemd1', '/org/freedesktop/systemd1')
+
+
+def get_system_state():
+    """Get system state."""
+    properties_manager = dbus.Interface(proxy, 'org.freedesktop.DBus.Properties')
+    system_state = properties_manager.Get('org.freedesktop.systemd1.Manager', 'SystemState')
+    return system_state
+
+
+def get_failed_units():
+    """Get a list of failed system units."""
+    units = proxy.ListUnits(dbus_interface='org.freedesktop.systemd1.Manager')
+    failed_units = []
+    for u in units:
+        service, _, loaded, active, state = u[:5]
+        if active == 'failed':
+            failed_units.append(service)
+    return failed_units
+
+
+system_state = get_system_state()
+if system_state in ['running', 'starting']:
+    print('System OK: {}'.format(system_state))
     sys.exit(0)
 else:
-    print('System NOT OK: {}'.format(state))
-    sys.exit(0)
+    print('System NOT OK: {}, failed: {}'.format(system_state, " ".join(get_failed_units())))
+    sys.exit(2)
