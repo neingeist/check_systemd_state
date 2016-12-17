@@ -44,3 +44,5 @@ if system_state in ['running', 'starting']:
 else:
     print('CRIT: {}, failed: {}'.format(system_state, " ".join(get_failed_units())))
     sys.exit(2)
+
+# vim:tw=120:
