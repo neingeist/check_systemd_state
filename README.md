@@ -1,5 +1,8 @@
 check_systemd_state
 ===================
+
+![Sample output screenshot: System NOT OK: degraded, failed: drbd.service](README.png)
+
 Nagios plugin to check the system state according to systemd. This plugin checks
 the system's state according to systemd, i.e.
 
