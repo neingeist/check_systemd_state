@@ -38,8 +38,8 @@ def get_failed_units():
 
 system_state = get_system_state()
 if system_state in ['running', 'starting']:
-    print('System OK: {}'.format(system_state))
+    print('OK: {}'.format(system_state))
     sys.exit(0)
 else:
-    print('System NOT OK: {}, failed: {}'.format(system_state, " ".join(get_failed_units())))
+    print('CRIT: {}, failed: {}'.format(system_state, " ".join(get_failed_units())))
     sys.exit(2)
