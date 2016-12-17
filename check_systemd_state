@@ -20,14 +20,15 @@ proxy = bus.get_object('org.freedesktop.systemd1', '/org/freedesktop/systemd1')
 
 def get_system_state():
     """Get system state."""
-    properties_manager = dbus.Interface(proxy, 'org.freedesktop.DBus.Properties')
-    system_state = properties_manager.Get('org.freedesktop.systemd1.Manager', 'SystemState')
+    properties = dbus.Interface(proxy, 'org.freedesktop.DBus.Properties')
+    system_state = properties.Get('org.freedesktop.systemd1.Manager', 'SystemState')
     return system_state
 
 
 def get_failed_units():
     """Get a list of failed system units."""
-    units = proxy.ListUnits(dbus_interface='org.freedesktop.systemd1.Manager')
+    manager = dbus.Interface(proxy, 'org.freedesktop.systemd1.Manager')
+    units = manager.ListUnits()
     failed_units = []
     for u in units:
         service, _, loaded, active, state = u[:5]
