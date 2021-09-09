@@ -15,7 +15,7 @@ these commands:
     $ systemctl list-units
     $ systemctl status
 
-Requires python-dbus.
+Requires python3-dbus.
 
 License: Public Domain. Keep my name in it if you like.
-Author:  Mike Gerber 2015, 2016
+Author:  Mike Gerber 2015, 2016, 2021
